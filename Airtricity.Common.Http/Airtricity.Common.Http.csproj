@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Target framework, language version, warning policy, packaging defaults and the shared
+       package metadata all come from ..\Directory.Build.props. Only what is specific to this
+       package belongs here. The version is Major.Minor from VersionPrefix; the pipeline supplies
+       the patch. -->
+
+  <PropertyGroup>
+    <PackageId>Airtricity.Common.Http</PackageId>
+    <Product>Airtricity Http</Product>
+    <Title>Airtricity Common Resilient HTTP Client Library</Title>
+    <Description>Common HTTP client library for Airtricity applications providing every standard and custom HTTP verb, JSON request/response handling, a configurable resilience pipeline (retry with exponential backoff and jitter, circuit breaker, total and per-attempt timeouts, rate limiting, concurrency limiting), a structured result and error model, dependency injection with per-client configuration, and structured logging with header redaction.</Description>
+    <Summary>Resilient HTTP client abstraction over IHttpClientFactory with retry, circuit breaker, timeouts, rate limiting and a structured error model</Summary>
+    <PackageTags>airtricity;http;httpclient;rest;resilience;polly;retry;circuit-breaker;rate-limiting;async</PackageTags>
+    <PackageReleaseNotes>Targets net10.0 only. See CHANGELOG.md for the full list of changes.</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <!-- Expose internals to the test project -->
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Airtricity.Common.Http.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Microsoft.Extensions.Http.Resilience brings Microsoft.Extensions.Http, Http.Diagnostics and
+         Microsoft.Extensions.Resilience transitively. Polly.Core and Polly.RateLimiting are
+         referenced explicitly at the version the sibling libraries already pin (8.6.6), because
+         Microsoft.Extensions.Resilience only asks for 8.4.2 and we want one Polly across the repo.
+
+         The Microsoft.Extensions.* references below are 10.0.13, not the 9.0.18 the sibling
+         libraries use. Those four have no hard floor of their own, so they can advertise a low
+         one; this package cannot. Microsoft.Extensions.Http.Resilience 10.11.0 depends on
+         Microsoft.Extensions.Http 10.0.13, which requires 10.0.13 of each of these, and a lower
+         direct reference is NU1605 (a package downgrade) - an error here, because
+         TreatWarningsAsErrors is on. 10.0.13 is the real floor whether it is written down or not. -->
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.11.0" />
+    <PackageReference Include="Polly.Core" Version="8.6.6" />
+    <PackageReference Include="Polly.RateLimiting" Version="8.6.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.13" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.13" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.13" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.13" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.13" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.13" />
+    <!-- System.Text.Json, System.Diagnostics.Metrics and System.Diagnostics.DiagnosticSource are
+         provided by the net10.0 shared framework, so a direct package reference is redundant. -->
+  </ItemGroup>
+
+</Project>
